@@ -1,1 +1,4 @@
-
+.env
+img
+node_module
+dist
