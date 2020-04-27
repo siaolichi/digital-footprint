@@ -14,7 +14,9 @@ class MainContainer extends Component {
           datetime: ''
         },
         isLoggedIn: false,
-        photo: 'https://previews.123rf.com/images/isselee/isselee1103/isselee110300446/8972925-british-shorthair-cat-8-months-old-in-front-of-white-background.jpg'
+        defaultphoto: 'https://previews.123rf.com/images/isselee/isselee1103/isselee110300446/8972925-british-shorthair-cat-8-months-old-in-front-of-white-background.jpg',
+        photo: 'https://previews.123rf.com/images/isselee/isselee1103/isselee110300446/8972925-british-shorthair-cat-8-months-old-in-front-of-white-background.jpg',
+        code: ''
       };
     };
     loginHandler = async() => {
@@ -32,14 +34,39 @@ class MainContainer extends Component {
         const photoResponse = await axios.get(`http://127.0.0.1:8000/img/${response.data.result}.jpg`);
         console.log(photoResponse)
         this.setState({photo: `img/${response.data.result}.jpg`});
+        this.setState({code: response.data.result});
       }catch(err){
         alert("no photo founds");
-        this.setState({photo: 'https://previews.123rf.com/images/isselee/isselee1103/isselee110300446/8972925-british-shorthair-cat-8-months-old-in-front-of-white-background.jpg'});
+        this.setState({photo: this.state.defaultphoto});
       }
     };
+    deleteHandler = async() => {
+      try{
+        const response = await axios.post(
+          'http://127.0.0.1:8000/delete-photo',
+          {
+            code: this.state.code
+          },
+          { headers: { 'Content-Type': 'application/json' } }
+        )
+        console.log(response.data.result)
+      }catch(err){
+        alert("no photo to remove, please try again!");
+      }
+      this.setState({
+        code: '',
+        photo: this.state.defaultphoto,
+        isLoggedIn: !this.state.isLoggedIn,
+        login:{id: '', datetime: ''}
+      });
+    };
     gobackHandler = () => {
-      this.setState({login:{id: '', datetime: ''}})
-      this.setState({isLoggedIn: !this.state.isLoggedIn});
+      this.setState({
+        code: '',
+        photo: this.state.defaultphoto,
+        isLoggedIn: !this.state.isLoggedIn,
+        login:{id: '', datetime: ''}
+      });
     };
     changeParentData = (inputObject) => {
       console.log(inputObject)
@@ -53,7 +80,8 @@ class MainContainer extends Component {
                 handler={this.loginHandler} 
                 changeParentData={this.changeParentData}
                 login={this.state.login}/>
-      else return <ShowPhoto photo={this.state.photo} handler={this.gobackHandler}/>
+      else return <ShowPhoto photo={this.state.photo} handler={this.gobackHandler}
+                  deleteHandler={this.deleteHandler}/>
     };
     render() {
       return (

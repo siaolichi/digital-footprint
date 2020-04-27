@@ -2,3 +2,7 @@
 img
 node_module
 dist
+*.fbx
+*.stp
+TDImportCache
+*.fbx

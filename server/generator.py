@@ -15,10 +15,10 @@ MONGODB_ADDR = os.getenv("MONGODB_ADDR")
 PASSWORD = os.getenv("PASSWORD")
 
 # MongoDB
-import pymongo
-client = pymongo.MongoClient(MONGODB_ADDR)
-db = client.history
-collection = db.test
+# import pymongo
+# client = pymongo.MongoClient(MONGODB_ADDR)
+# db = client.history
+# collection = db.test
 
 # OSC Config
 from pythonosc import udp_client
@@ -51,13 +51,15 @@ def generateHash(data_id):
   time = str(datetime.now().isoformat(' ', 'seconds'))
   password = str(data_id) + " " + time + " " + PASSWORD
   name = hashlib.sha224(str.encode( password )).hexdigest()
-  result = collection.insert_one({
-    'hash_id': name,
-    'data_id': data_id,
-    'datetime': time,
-    'password': password
-  })
+  # result = collection.insert_one({
+  #   'hash_id': name,
+  #   'data_id': data_id,
+  #   'datetime': time,
+  #   'password': password
+  # })
   client.send_message("/lyric", "ID number, " + str(data_id) + ", Time, " + time)
+  print("ID number, " + str(data_id) + ", Time, " + time)
+  # print(data_id, time)
   return name
 
 def printHashCode(code):
@@ -73,19 +75,21 @@ if __name__ == "__main__":
     cv2.waitKey(50)
     cv2.imshow('im',im)
     faces=detector.detectMultiScale(gray, scaleFactor=1.2, minNeighbors=5, minSize=(100, 100), flags=cv2.CASCADE_SCALE_IMAGE)
-    print(len(faces))
+    # print(len(faces))
     for(x,y,w,h) in faces:
 
       if(status == 1):
         # generate hash code and send data to TD
         name = generateHash(data_id)
         # save image with hash code
-        cv2.imwrite(os.path.join(path, "../website/dist/img/"+name+".jpg"), im)
+        cv2.imwrite(os.path.join(path, "./public/dist/img/"+name+".jpg"), im)
+        # print(os.path.join(path, "/public/img/"+name+".jpg"))
         print("sent!")
         data_id += 1
 
       cv2.rectangle(im,(x-50,y-50),(x+w+50,y+h+50),(225,0,0),2)
       status = 0
+    # client.send_message("/lyric", "Waiting for events...")
     if len(faces) == 0:
-      print('no face detected')
+      # print('no face detected')
       status = 1

@@ -6,10 +6,6 @@ import '@material/react-button/dist/button.css';
 class ShowPhoto extends Component {
     constructor(){
         super();
-        this.state = {
-            id: '',
-            datetime: ''
-        }
     };
     render(){
         return(
@@ -25,6 +21,14 @@ class ShowPhoto extends Component {
                     }}
                 >
                     back
+                </Button>
+                <br/>
+                <Button
+                    onClick={(e)=>{
+                        this.props.deleteHandler();
+                    }}
+                >
+                    remove photo
                 </Button>
             </div>
         )
